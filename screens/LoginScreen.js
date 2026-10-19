@@ -14,7 +14,10 @@ export default function LoginScreen({ navigation }) {
   const onLogin = () => {
     const res = login(email, password);
     if (res.ok) {
-      navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
+      navigation.reset({
+        index: 0,
+        routes: [{ name: res.role === 'admin' ? 'Admin' : 'Main' }],
+      });
     } else {
       Alert.alert('Error', res.error);
     }
@@ -57,7 +60,10 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.or}>— O continúa con —</Text>
         <TouchableOpacity
           style={styles.googleButton}
-          onPress={() => { login('google@user.com', 'google'); navigation.reset({ index: 0, routes: [{ name: 'Main' }] }); }}
+          onPress={() => {
+            const res = login('google@user.com', 'google');
+            navigation.reset({ index: 0, routes: [{ name: res.role === 'admin' ? 'Admin' : 'Main' }] });
+          }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <Ionicons name="logo-google" size={18} color="#4a1008" />

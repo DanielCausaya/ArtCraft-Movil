@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity, StatusBar,
+  View, Text, StyleSheet, TouchableOpacity, StatusBar, ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../context/AppContext';
@@ -24,42 +24,54 @@ export default function ProfileScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#6b1a1a" />
-      <View style={styles.header}>
-        <Ionicons name="person-circle" size={90} color="#FBE9D0" />
-        <Text style={styles.name}>{user ? user.name : 'Invitado'}</Text>
-        <Text style={styles.email}>{user ? user.email : 'sin sesión'}</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('OpcionesPerfil', { section: 'data' })}>
-          <Text style={styles.edit}>Editar perfil</Text>
-        </TouchableOpacity>
-      </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <Ionicons name="person-circle" size={90} color="#FBE9D0" />
+          <Text style={styles.name}>{user ? user.name : 'Invitado'}</Text>
+          <Text style={styles.email}>{user ? user.email : 'sin sesión'}</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('OpcionesPerfil', { section: 'data' })}>
+            <Text style={styles.edit}>Editar perfil</Text>
+          </TouchableOpacity>
+        </View>
 
-      <View style={{ padding: 16, gap: 10 }}>
-        <TouchableOpacity style={styles.row} onPress={() => navigation.navigate('Pedidos')}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Ionicons name="bag-handle-outline" size={20} color="#4a1008" />
-            <Text style={[styles.rowText, { marginLeft: 8 }]}>Mis pedidos</Text>
-          </View>
-          <Text>›</Text>
-        </TouchableOpacity>
-
-        {items.map((it) => (
-          <TouchableOpacity key={it.label} style={styles.row} onPress={() => navigation.navigate('OpcionesPerfil', { section: it.section })}>
+        <View style={{ padding: 16, gap: 10 }}>
+          <TouchableOpacity style={styles.row} onPress={() => navigation.navigate('Pedidos')}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Ionicons name={it.icon} size={20} color="#4a1008" />
-              <Text style={[styles.rowText, { marginLeft: 8 }]}>{it.label}</Text>
+              <Ionicons name="bag-handle-outline" size={20} color="#4a1008" />
+              <Text style={[styles.rowText, { marginLeft: 8 }]}>Mis pedidos</Text>
             </View>
             <Text>›</Text>
           </TouchableOpacity>
-        ))}
 
-        <TouchableOpacity style={styles.row} onPress={onLogout}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Ionicons name="log-out-outline" size={20} color="#8c1d0d" />
-            <Text style={[styles.rowText, { color: '#8c1d0d', marginLeft: 8 }]}>Cerrar sesión</Text>
-          </View>
-          <Text>›</Text>
-        </TouchableOpacity>
-      </View>
+          {user?.role === 'admin' && (
+            <TouchableOpacity style={styles.row} onPress={() => navigation.navigate('Admin')}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons name="shield-checkmark-outline" size={20} color="#8c1d0d" />
+                <Text style={[styles.rowText, { color: '#8c1d0d', marginLeft: 8 }]}>Panel de administración</Text>
+              </View>
+              <Text>›</Text>
+            </TouchableOpacity>
+          )}
+
+          {items.map((it) => (
+            <TouchableOpacity key={it.label} style={styles.row} onPress={() => navigation.navigate('OpcionesPerfil', { section: it.section })}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons name={it.icon} size={20} color="#4a1008" />
+                <Text style={[styles.rowText, { marginLeft: 8 }]}>{it.label}</Text>
+              </View>
+              <Text>›</Text>
+            </TouchableOpacity>
+          ))}
+
+          <TouchableOpacity style={styles.row} onPress={onLogout}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Ionicons name="log-out-outline" size={20} color="#8c1d0d" />
+              <Text style={[styles.rowText, { color: '#8c1d0d', marginLeft: 8 }]}>Cerrar sesión</Text>
+            </View>
+            <Text>›</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
   );
 }

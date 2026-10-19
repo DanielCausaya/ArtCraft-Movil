@@ -12,6 +12,7 @@ import CartScreen from './screens/CartScreen';
 import PaymentScreen from './screens/PaymentScreen';
 import OrdersScreen from './screens/OrdersScreen';
 import ProfileMenuScreen from './screens/ProfileMenuScreen';
+import AdminScreen from './screens/admin/AdminScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -35,6 +36,7 @@ export default function App() {
           <Stack.Screen name="Pago" component={PaymentScreen} />
           <Stack.Screen name="Pedidos" component={OrdersScreen} />
           <Stack.Screen name="OpcionesPerfil" component={ProfileMenuScreen} />
+          <Stack.Screen name="Admin" component={AdminScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </AppProvider>

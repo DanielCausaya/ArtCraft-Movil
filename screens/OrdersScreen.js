@@ -1,14 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, FlatList, StatusBar, TouchableOpacity, Image,
 } from 'react-native';
 import { formatCOP } from '../data/mock';
 import { useApp } from '../context/AppContext';
 
-const tabs = ['Todos', 'En camino', 'Entregados', 'Cancelados'];
+const tabs = [
+  { label: 'Todos', status: null },
+  { label: 'En camino', status: 'En camino' },
+  { label: 'Entregados', status: 'Entregado' },
+  { label: 'Cancelados', status: 'Cancelado' },
+];
+
+const statusColor = (s) => (s === 'Entregado' ? '#2b7a0b' : s === 'Cancelado' ? '#8c1d0d' : '#d4580b');
 
 export default function OrdersScreen({ navigation }) {
   const { orders } = useApp();
+  const [tab, setTab] = useState(0);
+
+  const filtrados = tabs[tab].status
+    ? orders.filter((o) => o.status === tabs[tab].status)
+    : orders;
 
   return (
     <View style={styles.container}>
@@ -21,26 +33,34 @@ export default function OrdersScreen({ navigation }) {
         <View style={{ width: 20 }} />
       </View>
 
-      <View style={{ flexDirection: 'row', gap: 16, padding: 14 }}>
+      <View style={styles.tabsRow}>
         {tabs.map((t, i) => (
-          <Text key={t} style={{ color: i === 0 ? '#8c1d0d' : '#999', fontWeight: i === 0 ? 'bold' : 'normal', fontSize: 12 }}>{t}</Text>
+          <TouchableOpacity
+            key={t.label}
+            style={[styles.tabBtn, i === tab && styles.tabBtnActive]}
+            onPress={() => setTab(i)}
+          >
+            <Text style={i === tab ? styles.tabActive : styles.tab}>{t.label}</Text>
+          </TouchableOpacity>
         ))}
       </View>
 
       <FlatList
-        data={orders}
+        data={filtrados}
         keyExtractor={(o) => o.id}
         contentContainerStyle={{ padding: 16, gap: 12 }}
         ListEmptyComponent={
           <Text style={{ textAlign: 'center', marginTop: 60, color: '#8c1d0d' }}>
-            Aún no tienes pedidos. ¡Compra algo!
+            {orders.length === 0
+              ? 'Aún no tienes pedidos. ¡Compra algo!'
+              : 'No tienes pedidos en esta categoría.'}
           </Text>
         }
         renderItem={({ item }) => (
           <View style={styles.card}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text style={styles.title}>Pedido {item.id}</Text>
-              <Text style={styles.status}>{item.status} ›</Text>
+              <Text style={[styles.status, { color: statusColor(item.status) }]}>{item.status} ›</Text>
             </View>
             <Text style={styles.date}>{item.date}</Text>
             <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
@@ -63,8 +83,25 @@ const styles = StyleSheet.create({
   header: { backgroundColor: '#6b1a1a', paddingTop: 40, paddingBottom: 12, paddingHorizontal: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   headerTitle: { color: '#FBE9D0', fontSize: 18, fontWeight: 'bold' },
   card: { backgroundColor: '#E8853D', borderRadius: 12, padding: 14 },
+  tabsRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 14,
+    paddingTop: 14,
+    paddingBottom: 4,
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+  tabBtn: {
+    backgroundColor: '#F5D7B8',
+    borderRadius: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  tabBtnActive: { backgroundColor: '#8c1d0d' },
+  tab: { color: '#8c1d0d', fontSize: 12 },
+  tabActive: { color: '#FBE9D0', fontSize: 12, fontWeight: 'bold' },
   title: { color: '#4a1008', fontWeight: 'bold' },
-  status: { color: '#2b7a0b', fontWeight: 'bold' },
+  status: { fontWeight: 'bold' },
   date: { color: '#4a1008', fontSize: 12 },
   thumb: { width: 44, height: 44, backgroundColor: '#d4580b', borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
   total: { marginLeft: 'auto', color: '#4a1008', fontWeight: 'bold', alignSelf: 'center' },

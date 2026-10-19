@@ -3,11 +3,11 @@ import {
   View, Text, StyleSheet, TouchableOpacity, FlatList, StatusBar, Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { products, formatCOP } from '../data/mock';
+import { formatCOP } from '../data/mock';
 import { useApp } from '../context/AppContext';
 
 export default function FavoritesScreen({ navigation }) {
-  const { favorites, toggleFavorite } = useApp();
+  const { products, favorites, toggleFavorite } = useApp();
   const favProducts = products.filter((p) => favorites.includes(p.id));
 
   return (
